@@ -9,10 +9,12 @@
 bst_t *create_new_node(bst_t *current, int value)
 {
 	bst_t *new_node = binary_tree_node(current, value);
+
 	if (value < current->n)
 		current->left = new_node;
 	else
 		current->right = new_node;
+
 	return (new_node);
 }
 
@@ -52,19 +54,19 @@ bst_t *bst_insert(bst_t **tree, int value)
 			/* If the left child is NULL, create the new node there */
 			if (current->left == NULL)
 				return (create_new_node(current, value));
-			else
-				/* Otherwise, go to the left child and repeat */
-				current = current->left;
+
+			/* Otherwise, go to the left child and repeat */
+			current = current->left;
 		}
 		/* If the value is larger, go to the right subtree */
-		else
+		else if (value > current->n)
 		{
 			/* If the right child is NULL, create the new node there */
 			if (current->right == NULL)
 				return (create_new_node(current, value));
-			else
-				/* Otherwise, go to the right child and repeat */
-				current = current->right;
+
+			/* Otherwise, go to the right child and repeat */
+			current = current->right;
 		}
 	}
 	return (NULL);
