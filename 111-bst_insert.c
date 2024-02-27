@@ -8,7 +8,11 @@
  */
 bst_t *create_new_node(bst_t *current, int value)
 {
-	bst_t *new_node = binary_tree_node(current, value);
+	bst_t *new_node;
+
+	new_node = binary_tree_node(current, value);
+	if (new_node == NULL)
+		return (NULL);
 
 	if (value < current->n)
 		current->left = new_node;
@@ -26,13 +30,12 @@ bst_t *create_new_node(bst_t *current, int value)
  */
 bst_t *bst_insert(bst_t **tree, int value)
 {
-	bst_t *new_node = NULL;
-	bst_t *current = NULL;
+	bst_t *new_node;
+	bst_t *current;
 
 	if (tree == NULL)
 		return (NULL);
 
-	/* If the tree is empty, create the root node */
 	if (*tree == NULL)
 	{
 		new_node = binary_tree_node(NULL, value);
@@ -40,32 +43,24 @@ bst_t *bst_insert(bst_t **tree, int value)
 		return (new_node);
 	}
 
-	/* Traverse the tree to find the right place to insert the value */
 	current = *tree;
 	while (current != NULL)
 	{
-		/* If the value is already present, do nothing */
 		if (current->n == value)
 			return (NULL);
 
-		/* If the value is smaller, go to the left subtree */
 		if (value < current->n)
 		{
-			/* If the left child is NULL, create the new node there */
 			if (current->left == NULL)
 				return (create_new_node(current, value));
 
-			/* Otherwise, go to the left child and repeat */
 			current = current->left;
 		}
-		/* If the value is larger, go to the right subtree */
 		else if (value > current->n)
 		{
-			/* If the right child is NULL, create the new node there */
 			if (current->right == NULL)
 				return (create_new_node(current, value));
 
-			/* Otherwise, go to the right child and repeat */
 			current = current->right;
 		}
 	}
