@@ -1,64 +1,117 @@
 #include "binary_trees.h"
 
-struct queue
+/* Function prototypes */
+void traverse_binary_tree(const binary_tree_t *tree, void (*func)(int));
+levelorder_queue_t *generate_node(binary_tree_t *node);
+void process_and_enqueue(binary_tree_t *node, levelorder_queue_t *head,
+		levelorder_queue_t **tail, void (*func)(int));
+void release_queue(levelorder_queue_t *head);
+void dequeue(levelorder_queue_t **head);
+
+/**
+ * traverse_binary_tree - Traverses a binary tree in level order.
+ * @tree: A pointer to the root node of the tree to traverse.
+ * @func: A pointer to a function to call for each node.
+ */
+void traverse_binary_tree(const binary_tree_t *tree, void (*func)(int))
 {
-    const binary_tree_t *node;
-    struct queue *next;
-};
+	levelorder_queue_t *head, *tail;
 
-typedef struct queue queue_t;
+	if (tree == NULL || func == NULL)
+		return;
 
-queue_t *enqueue(queue_t **rear, const binary_tree_t *node);
-void dequeue(queue_t **front);
-void level_order(const binary_tree_t *tree, void (*func)(int));
+	head = tail = generate_node((binary_tree_t *)tree);
+	if (head == NULL)
+		return;
 
-void level_order(const binary_tree_t *tree, void (*func)(int))
-{
-    queue_t *front = NULL;
-    queue_t *rear = NULL;
-
-    if (tree == NULL || func == NULL)
-        return;
-
-    rear = enqueue(&rear, tree);
-    front = rear;
-
-    while (front != NULL)
-    {
-        const binary_tree_t *temp = front->node;
-        func(temp->n);
-
-        if (temp->left)
-            rear = enqueue(&rear, temp->left);
-
-        if (temp->right)
-            rear = enqueue(&rear, temp->right);
-
-        dequeue(&front);
-    }
+	while (head != NULL)
+	{
+		process_and_enqueue(head->node, head, &tail, func);
+		dequeue(&head);
+	}
 }
 
-queue_t *enqueue(queue_t **rear, const binary_tree_t *node)
+/**
+ * generate_node - Generates a new node for a level order queue.
+ * @node: The binary tree node for the new node to contain.
+ * Return: A pointer to the new node, or NULL on failure.
+ */
+levelorder_queue_t *generate_node(binary_tree_t *node)
 {
-    queue_t *new = malloc(sizeof(*new));
-    if (new == NULL)
-    {
-        fprintf(stderr, "Failed to allocate memory for new queue node\n");
-        return NULL;
-    }
+	levelorder_queue_t *new_node;
 
-    new->node = node;
-    new->next = NULL;
+	new_node = malloc(sizeof(levelorder_queue_t));
+	if (new_node == NULL)
+		return (NULL);
 
-    if (*rear)
-        (*rear)->next = new;
+	new_node->node = node;
+	new_node->next = NULL;
 
-    return new;
+	return (new_node);
 }
 
-void dequeue(queue_t **front)
+/**
+ * process_and_enqueue - Processes a binary tree node and enqueues.
+ * @node: The binary tree node to process.
+ * @head: A pointer to the head of the queue.
+ * @tail: A double pointer to the tail of the queue.
+ * @func: A pointer to the function to call for each node.
+ */
+void process_and_enqueue(binary_tree_t *node, levelorder_queue_t *head,
+		levelorder_queue_t **tail, void (*func)(int))
 {
-    queue_t *temp = *front;
-    *front = (*front)->next;
-    free(temp);
+	levelorder_queue_t *new_node;
+
+	func(node->n);
+	if (node->left != NULL)
+	{
+		new_node = generate_node(node->left);
+		if (new_node == NULL)
+		{
+			release_queue(head);
+			exit(1);
+		}
+		(*tail)->next = new_node;
+		*tail = new_node;
+	}
+	if (node->right != NULL)
+	{
+		new_node = generate_node(node->right);
+		if (new_node == NULL)
+		{
+			release_queue(head);
+			exit(1);
+		}
+		(*tail)->next = new_node;
+		*tail = new_node;
+	}
+}
+
+/**
+ * release_queue - Releases a level order queue.
+ * @head: A pointer to the head of the queue.
+ */
+void release_queue(levelorder_queue_t *head)
+{
+	levelorder_queue_t *temp;
+
+	while (head != NULL)
+	{
+		temp = head->next;
+		free(head);
+		head = temp;
+	}
+}
+
+/**
+ * dequeue - Dequeues the head of a level order queue.
+ * @head: A double pointer to the head of the queue.
+ */
+void dequeue(levelorder_queue_t **head)
+{
+	levelorder_queue_t *temp;
+
+	temp = (*head)->next;
+	free(*head);
+	*head = temp;
 }
