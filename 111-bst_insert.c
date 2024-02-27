@@ -1,10 +1,10 @@
 #include "binary_trees.h"
 
 /**
- * create_new_node - creates a new node
- * @current: pointer to the current node
- * @value: value to store in the node to be inserted
- * Return: pointer to the created node
+ * create_new_node - generates a new node
+ * @current: pointer to the existing node
+ * @value: value to be inserted in the new node
+ * Return: pointer to the newly generated node
  */
 bst_t *create_new_node(bst_t *current, int value)
 {
@@ -23,10 +23,10 @@ bst_t *create_new_node(bst_t *current, int value)
 }
 
 /**
- * bst_insert - inserts a value in a Binary Search Tree
- * @tree: double pointer to the root node of the BST to insert the value
- * @value: value to store in the node to be inserted
- * Return: pointer to the created node, or NULL on failure
+ * bst_insert - adds a value into a Binary Search Tree
+ * @tree: double pointer to the root node of the BST where the value.
+ * @value: value to be inserted in the new node
+ * Return: pointer to the newly added node, or NULL if unsuccessful
  */
 bst_t *bst_insert(bst_t **tree, int value)
 {
