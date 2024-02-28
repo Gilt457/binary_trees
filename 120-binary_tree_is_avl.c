@@ -1,9 +1,9 @@
 #include "binary_trees.h"
 
 /**
- * height - Computes the height of a binary tree
+ * height - Calculates binary tree height
  * @tree: Pointer to the root node of the tree whose height is to be computed
- * Return: The height of the tree
+ * Return: Tree height
  */
 int height(const binary_tree_t *tree)
 {
@@ -20,10 +20,10 @@ int height(const binary_tree_t *tree)
 
 /**
  * is_avl_helper - Verifies if a binary tree is a valid AVL Tree
- * @tree: Pointer to the root node of the tree to verify
+ * @tree: A tree root node pointer to verify.
  * @lo: The smallest possible value for nodes in the tree
  * @hi: The largest possible value for nodes in the tree
- * Return: 1 if tree is a valid AVL Tree, and 0 otherwise
+ * Return: Tree is genuine AVL tree if 1; otherwise 0
  */
 int is_avl_helper(const binary_tree_t *tree, int lo, int hi)
 {
@@ -49,8 +49,8 @@ int is_avl_helper(const binary_tree_t *tree, int lo, int hi)
 
 /**
  * binary_tree_is_avl - Verifies if a binary tree is a valid AVL Tree
- * @tree: Pointer to the root node of the tree to verify
- * Return: 1 if tree is a valid AVL Tree, and 0 otherwise
+ * @tree: A tree root node pointer to verify
+ * Return: Tree is genuine AVL Tree if 1; otherwise 0
  */
 int binary_tree_is_avl(const binary_tree_t *tree)
 {
