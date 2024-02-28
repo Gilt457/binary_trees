@@ -7,7 +7,7 @@
  */
 int heap_extract(heap_t **root)
 {
-	int value, n;
+	int value;
 	heap_t *node, *temp;
 
 	if (!root || !*root)
@@ -22,47 +22,78 @@ int heap_extract(heap_t **root)
 		return (value);
 	}
 
-	heapify(node);
-	n = node->n;
-	if (node->parent->right)
-	{
-		temp = node->parent->right;
-		node->parent->right = NULL;
-	}
+	temp = max(node);
+	node->n = temp->n;
+	if (temp->parent->left == temp)
+		temp->parent->left = NULL;
 	else
-	{
-		temp = node->parent->left;
-		node->parent->left = NULL;
-	}
-
+		temp->parent->right = NULL;
 	free(temp);
-	return (n);
+
+	recurse_extract(*root);
+	return (value);
 }
 
 /**
- * heapify - rebuilds the heap
- * @node: pointer to the root node
+ * recurse_extract - rebuilds the heap
+ * @tree: pointer to the root node
  */
-void heapify(heap_t *node)
+void recurse_extract(heap_t *tree)
 {
-	heap_t *idx = node;
-	int temp;
+	heap_t *temp;
 
-	while (idx->left)
+	if (!tree || !tree->left)
+		return;
+
+	if (!tree->right || tree->left->n > tree->right->n)
+		temp = tree->left;
+	else
+		temp = tree->right;
+
+	if (tree->n < temp->n)
 	{
-		if (idx->right && idx->right->n > idx->left->n)
-		{
-			temp = idx->n;
-			idx->n = idx->right->n;
-			idx->right->n = temp;
-			idx = idx->right;
-		}
-		else
-		{
-			temp = idx->n;
-			idx->n = idx->left->n;
-			idx->left->n = temp;
-			idx = idx->left;
-		}
+		tree->n = temp->n;
+		temp->n = tree->n;
+		recurse_extract(temp);
 	}
+}
+
+/**
+ * max - finds the node with the maximum value
+ * @tree: pointer to the root node
+ * Return: pointer to the node with the maximum value
+ */
+heap_t *max(heap_t *tree)
+{
+	heap_t *max_node, *node;
+
+	if (!tree)
+		return (NULL);
+
+	node = tree;
+	max_node = tree;
+
+	while (node)
+	{
+		if (node->n > max_node->n)
+			max_node = node;
+
+		if (node->left)
+		{
+			node = node->left;
+			if (node->n > max_node->n)
+				max_node = node;
+		}
+
+		if (node->right)
+		{
+			node = node->right;
+			if (node->n > max_node->n)
+				max_node = node;
+		}
+
+		node = node->parent;
+	}
+
+	return (max_node);
 }
