@@ -1,51 +1,45 @@
 #include "binary_trees.h"
 
 /**
- * build_tree - Constructs an AVL tree from an ordered array
- * @array: Pointer to the array's first element that will be transformed
- * @start: The index where the segment of the array to be transformed begins
- * @end: The index where the segment of the array to be transformed ends
- *
- * Return: Pointer to the root node of the AVL tree that was created.
+ * aux_sort - Recursive function to build an AVL tree from a sorted array
+ * @parent: Parent node of the current subtree
+ * @array: Sorted array
+ * @begin: Starting index of the current subarray
+ * @last: Ending index of the current subarray
+ * Return: Pointer to the root node of the current subtree, or NULL on failure
  */
-avl_t *build_tree(int *array, size_t start, size_t end)
+avl_t *aux_sort(avl_t *parent, int *array, size_t begin, size_t last)
 {
-	avl_t *node;
 	size_t mid;
+	avl_t *root;
+	binary_tree_t *aux;
 
-	if (start > end)
+	if (begin > last)
 		return (NULL);
 
-	mid = (start + end) / 2;
-
-	node = malloc(sizeof(avl_t));
-	if (!node)
+	mid = (begin + last) / 2;
+	aux = binary_tree_node(parent, array[mid]);
+	if (!aux)
 		return (NULL);
 
-	node->n = array[mid];
-	node->parent = NULL;
-	node->left = build_tree(array, start, mid - 1);
-	node->right = build_tree(array, mid + 1, end);
+	root = (avl_t *)aux;
+	root->parent = parent;
+	root->left = aux_sort(root, array, begin, mid - 1);
+	root->right = aux_sort(root, array, mid + 1, last);
 
-	if (node->left)
-		node->left->parent = node;
-	if (node->right)
-		node->right->parent = node;
-
-	return (node);
+	return (root);
 }
 
 /**
- * sorted_array_to_avl - Constructs an AVL tree from an ordered array
- * @array: Pointer to the array's first element that will be transformed
- * @size: The number of elements in the array
- *
- * Return: Pointer to the root node of the AVL tree that was created.
+ * sorted_array_to_avl - Builds an AVL tree from a sorted array
+ * @array: Pointer to the first element of the sorted array
+ * @size: Number of elements in the array
+ * Return: Pointer to the root node of the AVL tree, or NULL on failure
  */
 avl_t *sorted_array_to_avl(int *array, size_t size)
 {
-	if (!array || size < 1)
+	if (!array || size == 0)
 		return (NULL);
 
-	return (build_tree(array, 0, size - 1));
+	return (aux_sort(NULL, array, 0, size - 1));
 }
