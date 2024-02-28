@@ -21,8 +21,8 @@ bst_t *bst_remove(bst_t *root, int value)
 
 /**
  * bst_remove_recursive - Recursively removes a node from a BST.
- * @root: Pointer to the root node of the BST to remove a node from.
- * @node: Pointer to the current node in the BST.
+ * @root: Pointer to BST root node to remove node.
+ * @node: Current BST node.
  * @value: Value to be removed from the BST.
  *
  * Return: Pointer to the root node after deletion.
@@ -45,7 +45,7 @@ bst_t *bst_remove_recursive(bst_t *root, bst_t *node, int value)
 }
 
 /**
- * bst_delete - Deletes a node from a binary search tree.
+ * bst_delete - Removes a binary search tree node.
  * @root: Pointer to the root node of the BST.
  * @node: Pointer to the node to be deleted from the BST.
  *
