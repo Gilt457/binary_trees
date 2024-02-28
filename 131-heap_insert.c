@@ -4,17 +4,17 @@ heap_t *heap_insert(heap_t **root, int value);
 size_t binary_tree_size(const binary_tree_t *tree);
 
 /**
- * heap_insert - Incorporates a value into a Max Binary Heap.
+ * heap_insert- Inserts a value in Max Binary Heap.
  *
- * @root: A double pointer to the root node of the Heap to insert the value into.
- * @value: The value to be inserted into the node.
+ * @root: A double pointer to the root node of the Heap to insert the value.
+ * @value: The value to store in the node to be inserted.
  *
- * Return: A pointer to the inserted node, or NULL if unsuccessful.
+ * Return: A pointer to the created node, or NULL on failure.
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *tree, *new_node, *swap_node;
-	int size, leaves, subtract, bit, level, temp;
+	heap_t *tree, *new, *flip;
+	int size, leaves, sub, bit, level, tmp;
 
 	if (!root)
 		return (NULL);
@@ -25,32 +25,32 @@ heap_t *heap_insert(heap_t **root, int value)
 	size = binary_tree_size(tree);
 	leaves = size;
 
-	for (level = 0, subtract = 1; leaves >= subtract; subtract *= 2, level++)
-		leaves -= subtract;
+	for (level = 0, sub = 1; leaves >= sub; sub *= 2, level++)
+		leaves -= sub;
 	for (bit = 1 << (level - 1); bit != 1; bit >>= 1)
 		tree = leaves & bit ? tree->right : tree->left;
 
-	new_node = binary_tree_node(tree, value);
-	leaves & 1 ? (tree->right = new_node) : (tree->left = new_node);
+	new = binary_tree_node(tree, value);
+	leaves & 1 ? (tree->right = new) : (tree->left = new);
 
-	swap_node = new_node;
-	while (swap_node->parent && (swap_node->n > swap_node->parent->n))
+	flip = new;
+	for (; flip->parent && (flip->n > flip->parent->n); flip = flip->parent)
 	{
-		temp = swap_node->n;
-		swap_node->n = swap_node->parent->n;
-		swap_node->parent->n = temp;
-		new_node = new_node->parent;
+		tmp = flip->n;
+		flip->n = flip->parent->n;
+		flip->parent->n = tmp;
+		new = new->parent;
 	}
 
-	return (new_node);
+	return (new);
 }
 
 /**
- * binary_tree_size - Determines the size of a binary tree.
+ * binary_tree_size - Measures the size of a binary tree.
  *
  * @tree: A pointer to the tree to be measured.
  *
- * Return: The size of the tree, or 0 if the tree is NULL.
+ * Return: Size of the tree, 0 if tree is NULL
  */
 size_t binary_tree_size(const binary_tree_t *tree)
 {
