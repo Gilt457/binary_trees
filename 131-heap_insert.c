@@ -1,78 +1,61 @@
 #include "binary_trees.h"
 
-/**
- * node_swap - swaps two nodes
- * @node: pointer to the node to be swapped
- */
-void node_swap(heap_t **node)
-{
-	int temp = (*node)->n;
-	while ((*node)->parent && (*node)->n > (*node)->parent->n)
-	{
-		(*node)->n = (*node)->parent->n;
-		(*node)->parent->n = temp;
-		*node = (*node)->parent;
-	}
-}
+heap_t *heap_insert(heap_t **root, int value);
+size_t binary_tree_size(const binary_tree_t *tree);
 
 /**
- * heap_insert - inserts a value into a Max Binary Heap
- * @root: double pointer to the root node of the Heap
- * @value: the value store in the node to be inserted
- * Return: pointer to the created node, or NULL on failure
+ * heap_insert - Incorporates a value into a Max Binary Heap.
+ *
+ * @root: A double pointer to the root node of the Heap to insert the value into.
+ * @value: The value to be inserted into the node.
+ *
+ * Return: A pointer to the inserted node, or NULL if unsuccessful.
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *node;
-	size_t parent_size, node_size;
+	heap_t *tree, *new_node, *swap_node;
+	int size, leaves, subtract, bit, level, temp;
 
-	node = binary_tree_node(NULL, value);
-	if (!node)
+	if (!root)
 		return (NULL);
 	if (!(*root))
+		return (*root = binary_tree_node(NULL, value));
+
+	tree = *root;
+	size = binary_tree_size(tree);
+	leaves = size;
+
+	for (level = 0, subtract = 1; leaves >= subtract; subtract *= 2, level++)
+		leaves -= subtract;
+	for (bit = 1 << (level - 1); bit != 1; bit >>= 1)
+		tree = leaves & bit ? tree->right : tree->left;
+
+	new_node = binary_tree_node(tree, value);
+	leaves & 1 ? (tree->right = new_node) : (tree->left = new_node);
+
+	swap_node = new_node;
+	while (swap_node->parent && (swap_node->n > swap_node->parent->n))
 	{
-		*root = node;
-		return (node);
+		temp = swap_node->n;
+		swap_node->n = swap_node->parent->n;
+		swap_node->parent->n = temp;
+		new_node = new_node->parent;
 	}
-	parent_size = binary_tree_size(*root);
-	node_size = 0;
-	while (1)
-	{
-		if (parent_size & node_size)
-		{
-			if ((*root)->left)
-				*root = (*root)->left;
-			else
-			{
-				(*root)->left = node;
-				break;
-			}
-		}
-		else
-		{
-			if ((*root)->right)
-				*root = (*root)->right;
-			else
-			{
-				(*root)->right = node;
-				break;
-			}
-		}
-		node_size >>= 1;
-	}
-	node->parent = *root;
-	node_swap(&node);
-	return (node);
+
+	return (new_node);
 }
 
 /**
- * binary_tree_size - measures the size of a binary tree
- * @tree: pointer to the root node of the tree to measure the size
- * Return: size of a binary tree or 0 if tree is NULL
+ * binary_tree_size - Determines the size of a binary tree.
+ *
+ * @tree: A pointer to the tree to be measured.
+ *
+ * Return: The size of the tree, or 0 if the tree is NULL.
  */
 size_t binary_tree_size(const binary_tree_t *tree)
 {
 	if (!tree)
 		return (0);
+
 	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
 }
