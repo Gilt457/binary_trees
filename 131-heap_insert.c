@@ -1,20 +1,6 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_size - This function calculates the size of a binary tree
- * @tree: This is the tree whose size will be measured
- *
- * Return: This function returns the size of the tree, or 0 if the tree is NULL
- */
-size_t binary_tree_size(const binary_tree_t *tree)
-{
-	if (!tree)
-		return (0);
-
-	return (1 + binary_tree_size(tree->left) + binary_tree_size(tree->right));
-}
-
-/**
  * heap_insert - This function adds a value into a Max Binary Heap
  * @root: This is a double pointer to the root node of the Heap where the value will be inserted
  * @value: This is the value that will be stored in the node that will be inserted
@@ -30,11 +16,9 @@ heap_t *heap_insert(heap_t **root, int value)
 		return (NULL);
 	if (!(*root))
 		return (*root = binary_tree_node(NULL, value));
-
 	tree = *root;
 	size = binary_tree_size(tree);
 	leaves = size;
-
 	for (level = 0, subtract = 1; leaves >= subtract; subtract *= 2, level++)
 		leaves -= subtract;
 
@@ -42,13 +26,10 @@ heap_t *heap_insert(heap_t **root, int value)
 		tree = leaves & bit ? tree->right : tree->left;
 
 	new_node = binary_tree_node(tree, value);
-	if (leaves & 1)
-		tree->right = new_node;
-	else
-		tree->left = new_node;
+	leaves & 1 ? (tree->right = new_node) : (tree->left = new_node);
 
 	swap = new_node;
-	while (swap->parent && (swap->n > swap->parent->n))
+	for (; swap->parent && (swap->n > swap->parent->n); swap = swap->parent)
 	{
 		temp = swap->n;
 		swap->n = swap->parent->n;
@@ -57,4 +38,18 @@ heap_t *heap_insert(heap_t **root, int value)
 	}
 
 	return (new_node);
+}
+
+/**
+ * binary_tree_size - This function calculates the size of a binary tree
+ * @tree: This is the tree whose size will be measured
+ *
+ * Return: This function returns the size of the tree, or 0 if the tree is NULL
+ */
+size_t binary_tree_size(const binary_tree_t *tree)
+{
+	if (!tree)
+		return (0);
+
+	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
 }
